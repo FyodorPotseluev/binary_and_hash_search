@@ -12,7 +12,8 @@ enum constants{
     cmd_position        = 2,
     cmd_size            = 6,
     entry_name_position  = 3,
-    max_entry_name_size  = 60
+    max_entry_name_size  = 60,
+    selection_sort_arr_size = 30
 };
 
 typedef struct tag_entry {
@@ -66,13 +67,13 @@ int size_of_file(FILE *file)
     return(ftell(file) / sizeof(entry));
 }
 
-void get_entry(entry **source, FILE *file, int file_pos)
+void get_entry(entry *source, FILE *file, int file_pos)
 {
     fseek(file, file_pos*sizeof(entry), SEEK_SET);
-    fread(*source, sizeof(entry), 1, file);
+    fread(source, sizeof(entry), 1, file);
 }
 
-void swap_left_and_right(
+void swap_entries(
     FILE *file, const entry *left, const entry *right,
     int left_pos, int right_pos
 )
@@ -109,22 +110,22 @@ int part_of_quick_sort_hoare(FILE *file, int left_pos, int right_pos)
     entry *left = malloc(sizeof(entry));
     entry *pivot = malloc(sizeof(entry));
     entry *right = malloc(sizeof(entry));
-    get_entry(&pivot, file, left_pos+(right_pos-left_pos)/2);
+    get_entry(pivot, file, left_pos+(right_pos-left_pos)/2);
     while (left_pos <= right_pos) {
         /* while (left->str < pivot->str) left_pos++ */
-        get_entry(&left, file, left_pos);
+        get_entry(left, file, left_pos);
         while (strcmp(left->str, pivot->str) < 0) {
             left_pos++;
-            get_entry(&left, file, left_pos);
+            get_entry(left, file, left_pos);
         }
         /* while (pivot->str < right->str) right_pos-- */
-        get_entry(&right, file, right_pos);
+        get_entry(right, file, right_pos);
         while (strcmp(pivot->str, right->str) < 0) {
             right_pos--;
-            get_entry(&right, file, right_pos);
+            get_entry(right, file, right_pos);
         }
         if (left_pos <= right_pos) {
-            swap_left_and_right(file, left, right, left_pos, right_pos);
+            swap_entries(file, left, right, left_pos, right_pos);
             left_pos++;
             right_pos--;
         }
@@ -133,9 +134,43 @@ int part_of_quick_sort_hoare(FILE *file, int left_pos, int right_pos)
     return left_pos;
 }
 
+void copy_entry(entry *dst, entry *src)
+{
+    memcpy(dst->str, src->str, max_entry_name_size);
+    dst->data = src->data;
+}
+
+void selection_sort(FILE *file, int start, int end)
+{
+    entry *entry_min_idx = malloc(sizeof(entry));
+    entry *entry_i_idx = malloc(sizeof(entry));
+    entry *entry_j_idx = malloc(sizeof(entry));
+    int i;
+    for (i=start; i < end; i++) {
+        int j, min = i;
+        get_entry(entry_i_idx, file, i);
+        copy_entry(entry_min_idx, entry_i_idx);
+        for (j=i+1; j < end + 1; j++) {
+            get_entry(entry_j_idx, file, j);
+            /* if (entry_min_idx->str > entry_j_idx->str) */
+            if (strcmp(entry_min_idx->str, entry_j_idx->str) > 0) {
+                min = j;
+                copy_entry(entry_min_idx, entry_j_idx);
+            }
+        }
+        if (min != i)
+            swap_entries(file, entry_min_idx, entry_i_idx, min, i);
+    }
+    clean_up(entry_min_idx, entry_i_idx, entry_j_idx, NULL);
+}
+
 void quick_sort_hoare_reqursive_call(FILE *file, int start, int end)
 {
     if (start >= end) return;
+    if (end - start < selection_sort_arr_size) {
+        selection_sort(file, start, end);
+        return;
+    }
     int right_start_position = part_of_quick_sort_hoare(file, start, end);
     quick_sort_hoare_reqursive_call(file, start, right_start_position-1);
     quick_sort_hoare_reqursive_call(file, right_start_position, end);

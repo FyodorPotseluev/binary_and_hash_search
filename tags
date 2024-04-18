@@ -9,6 +9,7 @@ clean_up	database_binary_and_hash_search.c	/^void clean_up(entry *first, ...)$/;
 cmd_position	database_binary_and_hash_search.c	/^    cmd_position        = 2,$/;"	e	enum:constants	file:
 cmd_size	database_binary_and_hash_search.c	/^    cmd_size            = 6,$/;"	e	enum:constants	file:
 constants	database_binary_and_hash_search.c	/^enum constants{$/;"	g	file:
+copy_entry	database_binary_and_hash_search.c	/^void copy_entry(entry *dst, entry *src)$/;"	f
 data	database_binary_and_hash_search.c	/^    int data;$/;"	m	struct:tag_entry	file:
 edit_entry	database_binary_and_hash_search.c	/^void edit_entry(FILE *file, int file_pos, entry *buffer)$/;"	f
 entry	database_binary_and_hash_search.c	/^} entry;$/;"	t	typeref:struct:tag_entry	file:
@@ -18,21 +19,27 @@ file_close_error_handling	database_binary_and_hash_search.c	/^void file_close_er
 file_open_error_handling	database_binary_and_hash_search.c	/^void file_open_error_handling(const FILE *file, const char *file_name)$/;"	f
 file_position	database_binary_and_hash_search.c	/^    file_position       = 1,$/;"	e	enum:constants	file:
 find_entry_with_binary_search	database_binary_and_hash_search.c	/^int find_entry_with_binary_search($/;"	f
-get_entry	database_binary_and_hash_search.c	/^void get_entry(entry **source, FILE *file, int file_pos)$/;"	f
+get_entry	database_binary_and_hash_search.c	/^void get_entry(entry *source, FILE *file, int file_pos)$/;"	f
+get_hash	get_index.c	/^unsigned int get_hash(char *str)$/;"	f
+get_idx	get_index.c	/^int get_idx(char *str)$/;"	f
+get_random_str	get_index.c	/^char *get_random_str()$/;"	f
 incorr_num_of_args_error_handling	database_binary_and_hash_search.c	/^void incorr_num_of_args_error_handling(int argc, bool (*condition)(int))$/;"	f
 is_less_than_three	database_binary_and_hash_search.c	/^bool is_less_than_three(int num)$/;"	f
 is_more_than_four	database_binary_and_hash_search.c	/^bool is_more_than_four(int num)$/;"	f
 is_not_three_and_is_not_four	database_binary_and_hash_search.c	/^bool is_not_three_and_is_not_four(int num)$/;"	f
 main	database_binary_and_hash_search.c	/^int main(int argc, char **argv)$/;"	f
+main	get_index.c	/^int main()$/;"	f
 make_new_entry	database_binary_and_hash_search.c	/^void make_new_entry(FILE *file, const char *entry_name, entry *buffer)$/;"	f
-max_entry_name_size	database_binary_and_hash_search.c	/^    max_entry_name_size  = 60$/;"	e	enum:constants	file:
+max_entry_name_size	database_binary_and_hash_search.c	/^    max_entry_name_size  = 60,$/;"	e	enum:constants	file:
 part_of_quick_sort_hoare	database_binary_and_hash_search.c	/^int part_of_quick_sort_hoare(FILE *file, int left_pos, int right_pos)$/;"	f
 print_all_entries	database_binary_and_hash_search.c	/^void print_all_entries(char *const *argv)$/;"	f
 print_entry	database_binary_and_hash_search.c	/^void print_entry(char *const *argv)$/;"	f
 quick_sort_hoare	database_binary_and_hash_search.c	/^void quick_sort_hoare(FILE *file)$/;"	f
 quick_sort_hoare_reqursive_call	database_binary_and_hash_search.c	/^void quick_sort_hoare_reqursive_call(FILE *file, int start, int end)$/;"	f
 read_error_handling	database_binary_and_hash_search.c	/^void read_error_handling(FILE *file, const char *file_name)$/;"	f
+selection_sort	database_binary_and_hash_search.c	/^void selection_sort(FILE *file, int start, int end)$/;"	f
+selection_sort_arr_size	database_binary_and_hash_search.c	/^    selection_sort_arr_size = 30$/;"	e	enum:constants	file:
 size_of_file	database_binary_and_hash_search.c	/^int size_of_file(FILE *file)$/;"	f
 str	database_binary_and_hash_search.c	/^    char str[max_entry_name_size];$/;"	m	struct:tag_entry	file:
-swap_left_and_right	database_binary_and_hash_search.c	/^void swap_left_and_right($/;"	f
+swap_entries	database_binary_and_hash_search.c	/^void swap_entries($/;"	f
 tag_entry	database_binary_and_hash_search.c	/^typedef struct tag_entry {$/;"	s	file:
