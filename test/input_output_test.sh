@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+project=database_binary_and_hash_search
+build_dir=./build
+bin_dir=$build_dir/bin
+executable=$bin_dir/$project
+
 input=()
 expected=()
 
@@ -161,9 +166,6 @@ expected+=( "Error: Too long entry name" )
 input+=("test.bin list string_which_consist_of_60_chars_which_surpas_the_limit_by_1")
 expected+=( $'an_entry_which_consist_of_exactly_59_characters_long_string - 1\nbanana - 1\ncabbage - 1\ncarrot - 1\ncucumber - 2\nonion - 2\npear - 4\npineapple - 3\npotato - 1\npumpkin - 2\ntomato - 1' )
 
-# 11 items currently
-# the goal is 40 items
-
 input+=("test.bin add 51")
 expected+=( "" )
 
@@ -291,7 +293,7 @@ i=0
 arr_len=${#input[@]}
 printf '\n'
 for idx in "${!input[@]}"; do
-    actual=$(./database_binary_and_hash_search ${input[idx]})
+    actual=$($executable ${input[idx]})
     if [[ "${expected[idx]}" != "$actual" ]]; then
         printf '%s\n\n' \
             '---------------------------------------------------------------'

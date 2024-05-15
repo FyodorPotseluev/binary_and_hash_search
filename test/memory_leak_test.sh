@@ -4,6 +4,11 @@
 # react in some cases when program returns error exitcode as to a test failure
 valgrind_command="valgrind --error-exitcode=42 --tool=memcheck --leak-check=full --errors-for-leak-kinds=definite,indirect,possible --show-leak-kinds=definite,indirect,possible"
 
+project=database_binary_and_hash_search
+build_dir=./build
+bin_dir=$build_dir/bin
+executable=$bin_dir/$project
+
 input=(
     "test.bin add apple pear"
     "test.bin add string_which_consist_of_60_chars_which_surpas_the_limit_by_1"
@@ -104,7 +109,7 @@ i=0
 fail_test_flag=0
 arr_len=${#input[@]}
 for arg in "${input[@]}"; do
-    output=$($valgrind_command ./database_binary_and_hash_search $arg 2>&1)
+    output=$($valgrind_command $executable $arg 2>&1)
     if [ $? -eq 42 ]; then
         printf '%s\n' \
             '------------------------------------------------------------------------------'
