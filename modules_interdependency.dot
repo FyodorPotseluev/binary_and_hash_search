@@ -5,25 +5,32 @@ digraph codeviz {
 
     node [shape=Mrecord, fontsize=12]
 
-    node [fillcolor="#ccccff", style=filled] "include/bin_sort_and_search.h" [label = "include/bin_sort_and_search.h"]
-    node [fillcolor="#ccccff", style=filled] "include/constants.h"           [label = "include/constants.h"]
-    node [fillcolor="#ccccff", style=filled] "include/error_handling.h"      [label = "include/error_handling.h"]
-    node [fillcolor="#ccccff", style=filled] "include/file_operations.h"     [label = "include/file_operations.h"]
-    node [fillcolor="#ff9999", style=filled] "src/bin_sort_and_search.c"     [label = "src/bin_sort_and_search.c"]
-    node [fillcolor="#ff9999", style=filled] "src/error_handling.c"          [label = "src/error_handling.c"]
-    node [fillcolor="#ff9999", style=filled] "src/file_operations.c"         [label = "src/file_operations.c"]
-    node [fillcolor="#ff9999", style=filled] "src/main.c"                    [label = "src/main.c"]
+    node [fillcolor="#ccccff", style=filled] "./include/bin_sort_and_search.h"  [label = "./include/bin_sort_and_search.h"]
+    node [fillcolor="#ccccff", style=filled] "./include/constants.h"            [label = "./include/constants.h"]
+    node [fillcolor="#ccccff", style=filled] "./include/error_handling.h"       [label = "./include/error_handling.h"]
+    node [fillcolor="#ccccff", style=filled] "./include/file_operations.h"      [label = "./include/file_operations.h"]
+    node [fillcolor="#ccccff", style=filled] "./include/hash_sort_and_search.h" [label = "./include/hash_sort_and_search.h"]
+    node [fillcolor="#ff9999", style=filled] "./src/bin_sort_and_search.c"      [label = "./src/bin_sort_and_search.c"]
+    node [fillcolor="#ff9999", style=filled] "./src/error_handling.c"           [label = "./src/error_handling.c"]
+    node [fillcolor="#ff9999", style=filled] "./src/file_operations.c"          [label = "./src/file_operations.c"]
+    node [fillcolor="#ff9999", style=filled] "./src/hash_sort_and_search.c"     [label = "./src/hash_sort_and_search.c"]
+    node [fillcolor="#ff9999", style=filled] "./src/main.c"                     [label = "./src/main.c"]
 
-    "include/file_operations.h"     -> "include/constants.h"
-    "src/bin_sort_and_search.c"     -> "include/bin_sort_and_search.h"
-    "src/bin_sort_and_search.c"     -> "include/constants.h"
-    "src/bin_sort_and_search.c"     -> "include/error_handling.h"
-    "src/bin_sort_and_search.c"     -> "include/file_operations.h"
-    "src/error_handling.c"          -> "include/error_handling.h"
-    "src/error_handling.c"          -> "include/constants.h"
-    "src/file_operations.c"         -> "include/file_operations.h"
-    "src/main.c"                    -> "include/bin_sort_and_search.h"
-    "src/main.c"                    -> "include/constants.h"
-    "src/main.c"                    -> "include/error_handling.h"
-    "src/main.c"                    -> "include/file_operations.h"
+    "./include/file_operations.h"      -> "./include/constants.h"
+    "./src/bin_sort_and_search.c"      -> "./include/bin_sort_and_search.h"
+    "./src/bin_sort_and_search.c"      -> "./include/constants.h"
+    "./src/bin_sort_and_search.c"      -> "./include/error_handling.h"
+    "./src/bin_sort_and_search.c"      -> "./include/file_operations.h"
+    "./src/error_handling.c"           -> "./include/error_handling.h"
+    "./src/error_handling.c"           -> "./include/constants.h"
+    "./src/file_operations.c"          -> "./include/file_operations.h"
+    "./src/file_operations.c"          -> "./include/error_handling.h"
+    "./src/hash_sort_and_search.c"     -> "./include/hash_sort_and_search.h"
+    "./src/hash_sort_and_search.c"     -> "./include/constants.h"
+    "./src/hash_sort_and_search.c"     -> "./include/error_handling.h"
+    "./src/main.c"                     -> "./include/bin_sort_and_search.h"
+    "./src/main.c"                     -> "./include/hash_sort_and_search.h"
+    "./src/main.c"                     -> "./include/constants.h"
+    "./src/main.c"                     -> "./include/error_handling.h"
+    "./src/main.c"                     -> "./include/file_operations.h"
 }

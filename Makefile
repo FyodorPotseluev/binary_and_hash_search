@@ -48,6 +48,12 @@
 #      - the `wordlist` function extracts a sublist of words from a given list.
 #        The first argument `from` specifies the starting index of the sublist.
 #        The second argument `to` specifies the ending index of the sublist;
+#   $(foreach var,list,text)
+#      - Iterates over a list of items.
+#      - `var`: A variable name that will take each value in the list;
+#      - `list`: A list of space-separated items;
+#      - `text`: The text to evaluate for each item in the list, typically
+#        containing references to $(var).
 #   $(eval $(ARGS):;@:)
 #      - `eval` function dynamically generates targets based on `ARGS` contents;
 #      - `:` is a syntax used in Makefiles to define targets and prerequisites;
@@ -94,6 +100,13 @@ CFLAGS = -Wall -Wextra -g -O0 -Iinclude
 # -Iinclude	Add the directory /include to the list of directories to be
 #  		searched for header files during preprocessing.
 
+# Conditionally add additional flags based on the value of D
+ifeq ($(D),HASH)
+    CFLAGS += -D HASH
+else ifeq ($(D),BIN)
+    CFLAGS += -D BIN
+endif
+
 # Function to parse command line arguments.
 # Unfortunatelly using the function causes the following error:
 # Makefile:109: *** recipe commences before first target.  Stop.
@@ -101,30 +114,30 @@ CFLAGS = -Wall -Wextra -g -O0 -Iinclude
 # define parse_args
 	# Extract the rest of the arguments after the first one
 	# $(eval ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)))
-	# ...and turn them into do-nothing targets
-	# $(eval $(ARGS):;@:)
+  	# Create dummy rules for the arguments to avoid errors
+  	# $(foreach arg,$(ARGS),$(eval $(arg):;@:))
 # endef
 
-# If the first argument is "run" or "debug"...
+# If the first argument is either "run" or "debug" or "leak_search"...
 ifeq (run,$(firstword $(MAKECMDGOALS)))
 	# use the rest as arguments for "run"
 	ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-  	# ...and turn them into do-nothing targets
-  	$(eval $(ARGS):dummy;@:)
+  	# Create dummy rules for the arguments to avoid errors
+  	$(foreach arg,$(ARGS),$(eval $(arg):;@:))
 	# the correct way to avoid code duplication
 	# $(call parse_args)
 else ifeq (debug,$(firstword $(MAKECMDGOALS)))
 	# use the rest as arguments for "run"
 	ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-  	# ...and turn them into do-nothing targets
-  	$(eval $(ARGS):dummy;@:)
+  	# Create dummy rules for the arguments to avoid errors
+  	$(foreach arg,$(ARGS),$(eval $(arg):;@:))
 	# the correct way to avoid code duplication
 	# $(call parse_args)
 else ifeq (leak_search,$(firstword $(MAKECMDGOALS)))
 	# use the rest as arguments for "run"
 	ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-  	# ...and turn them into do-nothing targets
-  	$(eval $(ARGS):dummy;@:)
+  	# Create dummy rules for the arguments to avoid errors
+  	$(foreach arg,$(ARGS),$(eval $(arg):;@:))
 	# the correct way to avoid code duplication
 	# $(call parse_args)
 endif
@@ -134,11 +147,18 @@ all: $(EXECUTABLE)
 # Display useful goals in this Makefile
 help:
 	@echo "Try one of the following make goals:"
-	@echo " > all - build project"
+	@echo " > D=BIN - compile using binary search algorithm"
+	@echo " > D=HASH - compile using hash search algorithm"
 	@echo " > readme - project's documentation"
 	@echo " > run arg1 arg2 arg3* - execute the project"
-	@echo " > input_output_test - run the project's integration test"
-	@echo " > memcheck_test - run the project's memory check test"
+	@echo " > input_output_test_bin"
+	@echo "     - run the project's integration test (for binary search algorithm)"
+	@echo " > input_output_test_hash"
+	@echo "     - run the project's integration test (for hash search algorithm)"
+	@echo " > memcheck_test_bin"
+	@echo "     - run the project's memory check test (for binary search algorithm)"
+	@echo " > memcheck_test_hash"
+	@echo "     - run the project's memory check test (for hash search algorithm)"
 	@echo " > debug arg1 arg2 arg3* - begin a gdb process for the executable"
 	@echo " > leak_search arg1 arg2 arg3* - run the project under valgrind"
 	@echo " > clean - delete build files in project"
@@ -148,22 +168,22 @@ help:
 	@echo "    - contain quotation marks, space characters;"
 	@echo "    - begin with a hyphen-minus symbol."
 	@echo " To avoid restrictions please run the project as"
-	@echo " build/bin/database_binary_and_hash_search arg1 arg2 arg3"
+	@echo " ./build/bin/database_binary_and_hash_search arg1 arg2 arg3"
 
 # Build the project by combining all object files
 $(EXECUTABLE): $(OBJMODULES) | $(BIN_DIR)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -lm -o $@
 
 # Build object files from sources in a template pattern
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -lm -o $@
 
 ifneq (clean, $(MAKECMDGOALS))
 -include deps.mk
 endif
 
 deps.mk: $(SRCMODULES)
-	$(CC) -MM -Iinclude $^ > $@
+	$(CC) -MM -Iinclude -D $(D) $^ > $@
 
 readme:
 ifdef EDITOR
@@ -175,11 +195,17 @@ endif
 run: $(EXECUTABLE)
 	@$(EXECUTABLE) $(ARGS)
 
-input_output_test:
-	$(TEST_DIR)/input_output_test.sh
+input_output_test_bin:
+	$(TEST_DIR)/input_output_test_bin.sh
 
-memcheck_test:
-	$(TEST_DIR)/memory_leak_test.sh
+input_output_test_hash:
+	$(TEST_DIR)/input_output_test_hash.sh
+
+memcheck_test_bin:
+	$(TEST_DIR)/memory_leak_test_bin.sh
+
+memcheck_test_hash:
+	$(TEST_DIR)/memory_leak_test_hash.sh
 
 debug:
 	gdb --args $(EXECUTABLE) $(ARGS)

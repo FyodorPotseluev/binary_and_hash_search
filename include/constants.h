@@ -16,7 +16,10 @@ enum constants{
     max_entry_name_size  = 60,
     /* array size, for this size and smaller, selection sort is used intead of
     binary sort to increase the sort speed */
-    selection_sort_arr_size = 30
+    selection_sort_arr_size = 30,
+    /* the number of bytes at the beginning of the file carrying information
+    about the current entries number and the current size of the hash file */
+    init_bytes_num = sizeof(unsigned int) * 2
 };
 
 typedef struct tag_entry {

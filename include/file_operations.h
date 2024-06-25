@@ -11,17 +11,15 @@
 
 int size_of_file(FILE *file);
 /*
-    Returnes file size.
-SIDE EFFECT:
-    - sets the file position at the end of file;
+    Returns file size (the number of entries the file currently contains).
 RECEIVES:
     - `file` file pointer;
 RETURNES:
-    - file size. */
+    - file size (the number of entries in the file) */
 
 void read_entry(entry *read_res, FILE *file, int file_pos);
 /*
-    Reades an entry (id + value) from the file.
+    Reads an entry (id + value) from the file.
 RECEIVES:
     - `read_res` address of the entry structure where the result of the read
     operation will be saved;
@@ -33,7 +31,7 @@ RETURNES:
 
 void write_entry(const entry *to_write, FILE *file, int file_pos);
 /*
-    Write an entry (id + value) to the file.
+    Writes an entry (id + value) to the file.
 RECEIVES:
     - `to_write` address of the entry structure, information from which will be
     used to write to the file;

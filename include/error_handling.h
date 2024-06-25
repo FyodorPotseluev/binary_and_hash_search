@@ -55,7 +55,7 @@ RECEIVES:
 RETURNES:
     - boolean value.*/
 
-void file_open_error_handling(const FILE *file, const char *file_name);
+void file_open_error_handling(FILE *file, const char *file_name);
 /*
     Checks if an error occurred while opening the file. If it did - prints the
 corresponding error message and ends the program with the error code 1.
@@ -76,27 +76,38 @@ RECEIVES:
 RETURNES:
     --- */
 
-void read_error_handling(FILE *file, const char *file_name);
-/*
-    Determines, if we can no longer read information from the file, whether an
-error has occured. If it did - prints the corresponding error message and ends
-the program with the error code 1.
-RECEIVES:
-    - `file` file pointer;
-    - `file_name` a string containing the file name to include it in an error
-    message.
-RETURNES:
-    --- */
 
-void file_close_error_handling(int fclose_res, const char *file_name);
-/*
-    Checks if an error occurred while closing the file. If it did - prints the
-corresponding error message and ends the program with the error code 1.
-RECEIVES:
-    - `fclose_res` file pointer;
-    - `file_name` a string containing the file name to include it in an error
-    message.
-RETURNES:
-    --- */
+/*******************************************************************************
+    The functions below are basically the standard functions with built-in
+error handling.
+    If an error takes place the corresponding error message is printed and the
+program terminates with an exit code of 1.
+*******************************************************************************/
+
+void fwrite_err_checked(
+    const void *buffer, size_t item_size, size_t items_num, FILE *file
+);
+
+size_t fread_err_checked(
+    void *buffer, size_t item_size, size_t items_num, FILE *file
+);
+
+void fseek_err_checked(FILE *file, long offset, int whence);
+
+long ftell_err_checked(FILE *file);
+
+void *malloc_err_checked(size_t size);
+
+void *calloc_err_checked(size_t arr_size, size_t element_size);
+
+void truncate_err_checked(const char *file_name, off_t length);
+
+void remove_err_checked(const char *file_name);
+
+void rename_err_checked(const char *old_file_name, const char *new_file_name);
+
+FILE *fopen_err_checked(const char *path_name, const char *mode);
+
+void fclose_err_checked(FILE *file);
 
 #endif

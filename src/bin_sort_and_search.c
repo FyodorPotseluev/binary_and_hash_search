@@ -24,9 +24,9 @@ static void clean_up(entry *first, ...)
 
 static int part_of_quick_sort_hoare(FILE *file, int left_pos, int right_pos)
 {
-    entry *left = malloc(sizeof(entry));
-    entry *pivot = malloc(sizeof(entry));
-    entry *right = malloc(sizeof(entry));
+    entry *left = malloc_err_checked(sizeof(entry));
+    entry *pivot = malloc_err_checked(sizeof(entry));
+    entry *right = malloc_err_checked(sizeof(entry));
     read_entry(pivot, file, left_pos+(right_pos-left_pos)/2);
     while (left_pos <= right_pos) {
         /* while (left->str < pivot->str) left_pos++ */
@@ -53,9 +53,9 @@ static int part_of_quick_sort_hoare(FILE *file, int left_pos, int right_pos)
 
 static void selection_sort(FILE *file, int start, int end)
 {
-    entry *entry_min_idx = malloc(sizeof(entry));
-    entry *entry_i_idx = malloc(sizeof(entry));
-    entry *entry_j_idx = malloc(sizeof(entry));
+    entry *entry_min_idx = malloc_err_checked(sizeof(entry));
+    entry *entry_i_idx = malloc_err_checked(sizeof(entry));
+    entry *entry_j_idx = malloc_err_checked(sizeof(entry));
     int i;
     for (i=start; i < end; i++) {
         int j, min = i;
@@ -94,24 +94,21 @@ void quick_sort_hoare(FILE *file)
 }
 
 int find_entry_with_binary_search(
-    FILE *file, const char *file_name, const char *entry_name
+    FILE *file, const char *entry_name
 )
 {
     int file_size = size_of_file(file);
     int left = 0, mid, right = file_size-1;
-    entry *mid_entry = malloc(sizeof(entry));
+    entry *mid_entry = malloc_err_checked(sizeof(entry));
     for(;;) {
-        int read_res;
-        if (left > right){
+        if (left > right) {
             /* there is no such entry */
             free(mid_entry);
             return -1;
         }
         mid = left + (right - left) / 2;
-        fseek(file, mid*sizeof(entry), SEEK_SET);
-        read_res = fread(mid_entry, sizeof(entry), 1, file);
-        if (!read_res)
-            read_error_handling(file, file_name);
+        fseek_err_checked(file, mid*sizeof(entry), SEEK_SET);
+        fread_err_checked(mid_entry, sizeof(entry), 1, file);
         /* entry_name < mid_entry->str */
         if (strcmp(entry_name, mid_entry->str) < 0) right = mid-1;
         /* mid_entry->str < entry_name */

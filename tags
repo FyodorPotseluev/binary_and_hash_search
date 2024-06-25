@@ -15,6 +15,7 @@ CONSTANTS_INCLUDED	include/constants.h	4;"	d
 ERROR_HANDLING_H_INCLUDED	include/error_handling.h	6;"	d
 EXECUTABLE	Makefile	/^EXECUTABLE := $(BIN_DIR)\/$(PROJECT)$/;"	m
 FILE_OPERATIONS_H_INCLUDED	include/file_operations.h	7;"	d
+HASH_SORT_AND_SEARCH_H_INCLUDED	include/hash_sort_and_search.h	4;"	d
 INC_DIR	Makefile	/^INC_DIR := .\/include$/;"	m
 OBJMODULES	Makefile	/^OBJMODULES := $(patsubst $(SRC_DIR)\/%.c, $(OBJ_DIR)\/%.o, $(SRCMODULES))$/;"	m
 OBJ_DIR	Makefile	/^OBJ_DIR := $(BUILD_DIR)\/obj$/;"	m
@@ -22,43 +23,87 @@ PROJECT	Makefile	/^PROJECT := database_binary_and_hash_search$/;"	m
 SRCMODULES	Makefile	/^SRCMODULES := $(wildcard $(SRC_DIR)\/*.c)$/;"	m
 SRC_DIR	Makefile	/^SRC_DIR := .\/src$/;"	m
 TEST_DIR	Makefile	/^TEST_DIR := .\/test$/;"	m
-add_entry	src/main.c	/^void add_entry(char *const *argv)$/;"	f
+add_entry	src/main.c	/^void add_entry(const char **argv)$/;"	f
+add_entry_to_hash_file	src/hash_sort_and_search.c	/^void add_entry_to_hash_file($/;"	f
+byte_inc_flag	src/hash_sort_and_search.c	/^} byte_inc_flag;$/;"	t	typeref:enum:tag_byte_inc_flag	file:
+calloc_err_checked	src/error_handling.c	/^void *calloc_err_checked(size_t arr_size, size_t element_size)$/;"	f
 clean_up	src/bin_sort_and_search.c	/^static void clean_up(entry *first, ...)$/;"	f	file:
 cmd_position	include/constants.h	/^    cmd_position        = 2,$/;"	e	enum:constants
 cmd_size	include/constants.h	/^    cmd_size            = 6,$/;"	e	enum:constants
 constants	include/constants.h	/^enum constants{$/;"	g
 copy_entry	src/file_operations.c	/^void copy_entry(entry *dst, const entry *src)$/;"	f
 data	include/constants.h	/^    int data;$/;"	m	struct:tag_entry
+do_we_rebuild_hash_file	src/hash_sort_and_search.c	/^static void do_we_rebuild_hash_file($/;"	f	file:
+dont_inc_num_of_entries_byte	src/hash_sort_and_search.c	/^    dont_inc_num_of_entries_byte, inc_num_of_entries_byte$/;"	e	enum:tag_byte_inc_flag	file:
 entry	include/constants.h	/^} entry;$/;"	t	typeref:struct:tag_entry
 entry_name_error_handling	src/error_handling.c	/^void entry_name_error_handling(const char *entry_name)$/;"	f
 entry_name_position	include/constants.h	/^    entry_name_position  = 3,$/;"	e	enum:constants
-file_close_error_handling	src/error_handling.c	/^void file_close_error_handling(int fclose_res, const char *file_name)$/;"	f
-file_open_error_handling	src/error_handling.c	/^void file_open_error_handling(const FILE *file, const char *file_name)$/;"	f
+execute_action	src/hash_sort_and_search.c	/^static void execute_action($/;"	f	file:
+fclose_err_checked	src/error_handling.c	/^void fclose_err_checked(FILE *file)$/;"	f
+file_open_error_handling	src/error_handling.c	/^void file_open_error_handling(FILE *file, const char *file_name)$/;"	f
 file_position	include/constants.h	/^    file_position       = 1,$/;"	e	enum:constants
 find_entry_with_binary_search	src/bin_sort_and_search.c	/^int find_entry_with_binary_search($/;"	f
-get_hash	dir_get_index/get_index.c	/^unsigned int get_hash(char *str)$/;"	f
-get_idx	dir_get_index/get_index.c	/^int get_idx(char *str)$/;"	f
-get_random_str	dir_get_index/get_index.c	/^char *get_random_str()$/;"	f
+find_idx_pos_action	src/hash_sort_and_search.c	/^} find_idx_pos_action;$/;"	t	typeref:enum:tag_find_idx_pos_action	file:
+find_idx_position_in_file_and	src/hash_sort_and_search.c	/^static void find_idx_position_in_file_and($/;"	f	file:
+fopen_err_checked	src/error_handling.c	/^FILE *fopen_err_checked(const char *path_name, const char *mode)$/;"	f
+fread_err_checked	src/error_handling.c	/^size_t fread_err_checked($/;"	f
+fseek_err_checked	src/error_handling.c	/^void fseek_err_checked(FILE *file, long offset, int whence)$/;"	f
+ftell_err_checked	src/error_handling.c	/^long ftell_err_checked(FILE *file)$/;"	f
+fwrite_err_checked	src/error_handling.c	/^void fwrite_err_checked($/;"	f
+get_hash	dir_get_index/get_index.c	/^unsigned int get_hash(const char *str)$/;"	f
+get_hash	src/hash_sort_and_search.c	/^static unsigned int get_hash(const char *str)$/;"	f	file:
+get_idx	dir_get_index/get_index.c	/^int get_idx(const char *str, int curr_table_size)$/;"	f
+get_idx	src/hash_sort_and_search.c	/^static unsigned int get_idx(const char *str, unsigned int hash_table_size)$/;"	f	file:
+get_init_bytes	src/hash_sort_and_search.c	/^static void get_init_bytes($/;"	f	file:
+handle_found_entry	src/hash_sort_and_search.c	/^static void handle_found_entry($/;"	f	file:
+handle_free_entry	src/hash_sort_and_search.c	/^static void handle_free_entry($/;"	f	file:
+hash_table_size	src/hash_sort_and_search.c	/^static const unsigned int hash_table_size[] = {$/;"	v	file:
+hash_table_sizes	dir_get_index/get_index.c	/^const int hash_table_sizes[] = {$/;"	v
+idx_increment	dir_get_index/get_index.c	/^void idx_increment(int *idx, int table_size)$/;"	f
+idx_increment	src/hash_sort_and_search.c	/^static void idx_increment(unsigned int *idx, unsigned int table_size)$/;"	f	file:
+inc_curr_num_of_entries_in_file	src/hash_sort_and_search.c	/^static void inc_curr_num_of_entries_in_file(FILE *file)$/;"	f	file:
+inc_num_of_entries_byte	src/hash_sort_and_search.c	/^    dont_inc_num_of_entries_byte, inc_num_of_entries_byte$/;"	e	enum:tag_byte_inc_flag	file:
 incorr_num_of_args_error_handling	src/error_handling.c	/^void incorr_num_of_args_error_handling(int argc, bool (*condition)(int))$/;"	f
 increment_entry	src/file_operations.c	/^void increment_entry(FILE *file, int file_pos)$/;"	f
+init_bytes_num	include/constants.h	/^    init_bytes_num = sizeof(unsigned int) * 2$/;"	e	enum:constants
+initializing_hash_file	src/hash_sort_and_search.c	/^void initializing_hash_file(const char *file_name)$/;"	f
 is_less_than_three	src/error_handling.c	/^bool is_less_than_three(int num)$/;"	f
 is_more_than_four	src/error_handling.c	/^bool is_more_than_four(int num)$/;"	f
 is_not_three_and_is_not_four	src/error_handling.c	/^bool is_not_three_and_is_not_four(int num)$/;"	f
 main	dir_get_index/get_index.c	/^int main()$/;"	f
-main	src/main.c	/^int main(int argc, char **argv)$/;"	f
+main	src/main.c	/^int main(int argc, const char **argv)$/;"	f
 make_new_entry	src/file_operations.c	/^void make_new_entry(FILE *file, const char *entry_name)$/;"	f
+malloc_err_checked	src/error_handling.c	/^void *malloc_err_checked(size_t size)$/;"	f
 max_entry_name_size	include/constants.h	/^    max_entry_name_size  = 60,$/;"	e	enum:constants
 part_of_quick_sort_hoare	src/bin_sort_and_search.c	/^static int part_of_quick_sort_hoare(FILE *file, int left_pos, int right_pos)$/;"	f	file:
-print_all_entries	src/main.c	/^void print_all_entries(char *const *argv)$/;"	f
-print_entry	src/main.c	/^void print_entry(char *const *argv)$/;"	f
+print_all_entries	src/hash_sort_and_search.c	/^    transfer_all_entries_to_from, print_all_entries$/;"	e	enum:tag_traverse_action	file:
+print_all_entries	src/main.c	/^void print_all_entries(const char **argv)$/;"	f
+print_entry	src/hash_sort_and_search.c	/^    write_entry, print_entry$/;"	e	enum:tag_find_idx_pos_action	file:
+print_entry	src/main.c	/^void print_entry(const char **argv)$/;"	f
+print_hash_entry	src/hash_sort_and_search.c	/^void print_hash_entry(FILE *file, const char *entry_name)$/;"	f
+print_hash_file	src/hash_sort_and_search.c	/^void print_hash_file(FILE *file)$/;"	f
+print_hash_table	dir_get_index/get_index.c	/^void print_hash_table(char **hash_table, int curr_table_size)$/;"	f
 quick_sort_hoare	src/bin_sort_and_search.c	/^void quick_sort_hoare(FILE *file)$/;"	f
 quick_sort_hoare_reqursive_call	src/bin_sort_and_search.c	/^static void quick_sort_hoare_reqursive_call(FILE *file, int start, int end)$/;"	f	file:
 read_entry	src/file_operations.c	/^void read_entry(entry *read_res, FILE *file, int file_pos)$/;"	f
-read_error_handling	src/error_handling.c	/^void read_error_handling(FILE *file, const char *file_name)$/;"	f
+rebuild	dir_get_index/get_index.c	/^char **rebuild(char **old_hash_table, int *table_size)$/;"	f
+rebuild	src/hash_sort_and_search.c	/^static FILE *rebuild(FILE *old_file, const char *old_file_name)$/;"	f	file:
+remove_err_checked	src/error_handling.c	/^void remove_err_checked(const char *file_name)$/;"	f
+rename_err_checked	src/error_handling.c	/^void rename_err_checked(const char *old_file_name, const char *new_file_name)$/;"	f
 selection_sort	src/bin_sort_and_search.c	/^static void selection_sort(FILE *file, int start, int end)$/;"	f	file:
-selection_sort_arr_size	include/constants.h	/^    selection_sort_arr_size = 30$/;"	e	enum:constants
+selection_sort_arr_size	include/constants.h	/^    selection_sort_arr_size = 30,$/;"	e	enum:constants
 size_of_file	src/file_operations.c	/^int size_of_file(FILE *file)$/;"	f
 str	include/constants.h	/^    char str[max_entry_name_size];$/;"	m	struct:tag_entry
 swap_entries	src/file_operations.c	/^void swap_entries(FILE *file, int first_pos, int second_pos)$/;"	f
+tag_byte_inc_flag	src/hash_sort_and_search.c	/^typedef enum tag_byte_inc_flag {$/;"	g	file:
 tag_entry	include/constants.h	/^typedef struct tag_entry {$/;"	s
+tag_find_idx_pos_action	src/hash_sort_and_search.c	/^typedef enum tag_find_idx_pos_action {$/;"	g	file:
+tag_traverse_action	src/hash_sort_and_search.c	/^typedef enum tag_traverse_action {$/;"	g	file:
+transfer_all_entries_to_from	src/hash_sort_and_search.c	/^    transfer_all_entries_to_from, print_all_entries$/;"	e	enum:tag_traverse_action	file:
+transfer_entry_to_from	src/hash_sort_and_search.c	/^static void transfer_entry_to_from($/;"	f	file:
+traverse_action	src/hash_sort_and_search.c	/^} traverse_action;$/;"	t	typeref:enum:tag_traverse_action	file:
+traverse_file_and	src/hash_sort_and_search.c	/^static void traverse_file_and($/;"	f	file:
+truncate_err_checked	src/error_handling.c	/^void truncate_err_checked(const char *file_name, off_t length)$/;"	f
 write_entry	src/file_operations.c	/^void write_entry(const entry *to_write, FILE *file, int file_pos)$/;"	f
+write_entry	src/hash_sort_and_search.c	/^    write_entry, print_entry$/;"	e	enum:tag_find_idx_pos_action	file:
+write_into_hash_table	dir_get_index/get_index.c	/^void write_into_hash_table($/;"	f

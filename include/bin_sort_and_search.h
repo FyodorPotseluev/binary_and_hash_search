@@ -16,9 +16,7 @@ RECEIVES:
 RETURNES:
     --- */
 
-int find_entry_with_binary_search(
-    FILE *file, const char *file_name, const char *entry_name
-);
+int find_entry_with_binary_search(FILE *file, const char *entry_name);
 /*
     Finds the file position containing a given entry name (id). The binary search
 is a divide and conquer algorithm and has the O=log(N) complexity.
