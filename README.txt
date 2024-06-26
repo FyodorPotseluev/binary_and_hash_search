@@ -7,7 +7,7 @@
 
     It uses either binary search or hash table based search at the user's discretion.
     The binary algorithm can add and an entry to a file and find it in logarithmic time O(log N).
-    The hash table based algorithm can add an entry to a file and find it for a constant time O=log(1)*
+    The hash table based algorithm can add an entry to a file and find it for a constant time O(1)*
 
     *(except of the cases when we need to add an entry to a hash file that is already 2/3 full and needs to be rebuilt in order to keep the hash search efficient. The rebuilding process can take a considerable amount of time).
 
@@ -24,10 +24,22 @@
     Run `make help` to see the list of Makefile commands.
 
     The list of program's commands:
-    - add - the record containing the given ID must be found in the given file. The entry counter must be incremented. If there is no such entry, it must be added to the end of the file with the counter value equals 1.
+    - add - the record containing the given ID must be found in the given file. The entry counter must be incremented. If there is no such entry, it must be added to the file with the counter value equals 1.
+    ```
+    make run file add entry
+    ```
     - query - The record containing the given ID must be found in the given file. The value of the "element ID + counter" pair must be printed to standard output. If there is no such entry, the counter value is going to be 0.
+    ```
+    make run file query entry
+    ```
     - list - prints all the "item id + counter" pairs contained in the file into standart output. The third command line argument may be not specified and ,if it does, should be ignored.
-
+    ```
+    make run file list
+    ```
+    - merge - combines two files into a new one. The final file includes all the identifiers from the source files. The value of each identifier either remains unchanged, if the identifier was present only in one of the source files, or is added to the value of the same identifier from the second source file.
+    ```
+    make run merge file_1 file_2 final_file
+    ```
                                 Contributing
 
     Issue Tracker: github.com/..............................

@@ -55,6 +55,50 @@ input=(
     "test.bin query cherry"
     "test.bin list string_which_consist_of_60_chars_which_surpas_the_limit_by_1"
     "test.bin query"
+    "merge file1 file2"
+    "merge file1 file2 file3 file4"
+    "merge file1 file2 file3"
+    "dst.bin add pear"
+    "dst.bin add carrot"
+    "dst.bin add carrot"
+    "dst.bin add cucumber"
+    "dst.bin add cabbage"
+    "dst.bin add pineapple"
+    "dst.bin add tomato"
+    "dst.bin list"
+    "src.bin add tomato"
+    "src.bin add banana"
+    "src.bin add onion"
+    "src.bin add potato"
+    "src.bin add an_entry_which_consist_of_exactly_59_characters_long_string"
+    "src.bin add kiwi"
+    "src.bin add cherry"
+    "src.bin add pumpkin"
+    "src.bin list"
+    "merge dst.bin src.bin res.bin"
+    "res.bin list"
+    "src.bin add g"
+    "merge src.bin res.bin new_res.bin"
+    "new_res.bin list"
+    "src.bin add pear"
+    "src.bin add carrot"
+    "src.bin add pumpkin"
+    "src.bin add carrot"
+    "src.bin add cucumber"
+    "src.bin add cabbage"
+    "src.bin add pineapple"
+    "src.bin add tomato"
+    "src.bin add banana"
+    "src.bin add onion"
+    "src.bin add potato"
+    "src.bin list"
+    "dst.bin add an_entry_which_consist_of_exactly_59_characters_long_string"
+    "dst.bin add kiwi"
+    "dst.bin add cherry"
+    "dst.bin add g"
+    "dst.bin list"
+    "merge src.bin dst.bin final_res.bin"
+    "final_res.bin list"
 )
 
 i=0
@@ -77,6 +121,8 @@ for arg in "${input[@]}"; do
     printf '[%d/%d]\n' "$i" "$arr_len"
 done
 rm test.bin
+rm new_res.bin
+rm final_res.bin
 if [[ "$fail_test_flag" = 0 ]]; then
     echo OK
 fi

@@ -25,7 +25,7 @@ void add_entry_to_hash_file(
     FILE **file, const char *file_name, const char *entry_name
 );
 /*
-    Adds the next user entry to a hash file. Has the O=log(1) complexity.
+    Adds the next user entry to a hash file. Has the O(1) complexity.
 Exception - the cases when the hash file is already 2/3 full of entries and
 needs to be rebuilt in order to keep the hash search efficient.
 The rebuilding process can take a considerable amount of time because the
@@ -58,27 +58,18 @@ RECEIVES:
 RETURNES:
     --- */
 
-#endif
-
-
-void quick_sort_hoare(FILE *file);
+void merge_hash_files_with_possible_rebuilding(
+    FILE **dst_file, const char *dst_file_name, FILE *src_file
+);
 /*
-    Sorts the entries in the file. Entries are sorted by entry name (id) in
-alpahabetical order. This enables to use the binary search algorithm later. The sort uses a divide and conquer algorithm and has the O=log(N) complexity.
+    Transfers all entries from the source file to the destination file. Every
+time during the transfering the destination file is full more than 2/3 it is
+rebuilt.
 RECEIVES:
-    - `file` file pointer;
+    - `dst_file` pointer to destination file pointer;
+    - `dst_file_name` a string containing the destination file name;
+    - `src_file` source file pointer;
 RETURNES:
     --- */
 
-int find_entry_with_binary_search(FILE *file, const char *entry_name);
-/*
-    Finds the file position containing a given entry name (id). The binary search
-is a divide and conquer algorithm and has the O=log(N) complexity.
-RECEIVES:
-    - `file` file pointer;
-    - `file_name` a string containing the file name to include it in possible
-    error messages;
-    - `entry_name` a string containing the entry name;
-RETURNES:
-    - the number of the position in the file containing the requested entry
-    name. If the entry name was not found returnes -1. */
+#endif

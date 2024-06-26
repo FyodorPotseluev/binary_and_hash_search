@@ -93,7 +93,7 @@ expected+=( $'cabbage - 1\ntomato - 3\npineapple - 1\npear - 1\npumpkin - 1\nban
 input+=("test.bin add potato")
 expected+=( "" )
 
-# add maximum size entry name
+# Add maximum size entry name
 input+=("test.bin add an_entry_which_consist_of_exactly_59_characters_long_string")
 expected+=( "" )
 
@@ -145,11 +145,157 @@ expected+=( $'cucumber - 1\nkiwi - 1\ncarrot - 3\npotato - 3\ntomato - 3\npineap
 input+=("test.bin query")
 expected+=( "Error: Item name has not been specified" )
 
+# "merge" command tests
+
+input+=("merge file1 file2")
+expected+=( "Error: Incorrect number of arguments" )
+
+input+=("merge file1 file2 file3 file4")
+expected+=( "Error: Incorrect number of arguments" )
+
+input+=("merge file1 file2 file3")
+expected+=( "file1: No such file or directory" )
+
+input+=("dst.bin add pear")
+expected+=( "" )
+
+input+=("dst.bin add carrot")
+expected+=( "" )
+
+input+=("dst.bin add pumpkin")
+expected+=( "" )
+
+input+=("dst.bin add carrot")
+expected+=( "" )
+
+input+=("dst.bin add cucumber")
+expected+=( "" )
+
+input+=("dst.bin add cabbage")
+expected+=( "" )
+
+input+=("dst.bin add pineapple")
+expected+=( "" )
+
+input+=("dst.bin add tomato")
+expected+=( "" )
+
+input+=("dst.bin list")
+expected+=( $'pear - 1\ncarrot - 2\ncabbage - 1\ntomato - 1\npineapple - 1\ncucumber - 1\npumpkin - 1' )
+
+input+=("src.bin add tomato")
+expected+=( "" )
+
+input+=("src.bin add banana")
+expected+=( "" )
+
+input+=("src.bin add onion")
+expected+=( "" )
+
+input+=("src.bin add potato")
+expected+=( "" )
+
+input+=("src.bin add an_entry_which_consist_of_exactly_59_characters_long_string")
+expected+=( "" )
+
+input+=("src.bin add kiwi")
+expected+=( "" )
+
+# input+=("src.bin list")
+# expected+=( $'tomato - 1\nbanana - 1\nan_entry_which_consist_of_exactly_59_characters_long_string - 1\nkiwi - 1\nonion - 1\npotato - 1' )
+
+# input+=("merge dst.bin src.bin res.bin")
+# expected+=( "" )
+
+# input+=("res.bin list")
+# expected+=( $'cabbage - 1\ntomato - 2\npineapple - 1\npear - 1\npumpkin - 1\nbanana - 1\npotato - 1\ncucumber - 1\ncarrot - 2\nan_entry_which_consist_of_exactly_59_characters_long_string - 1\nonion - 1\nkiwi - 1' )
+
+input+=("src.bin add cherry")
+expected+=( "" )
+
+input+=("src.bin add pumpkin")
+expected+=( "" )
+
+input+=("src.bin list")
+expected+=( $'tomato - 1\nbanana - 1\nan_entry_which_consist_of_exactly_59_characters_long_string - 1\nkiwi - 1\nonion - 1\npotato - 1\ncherry - 1\npumpkin - 1' )
+
+input+=("merge dst.bin src.bin res.bin")
+expected+=( "" )
+
+input+=("res.bin list")
+expected+=( $'cucumber - 1\nkiwi - 1\ncarrot - 2\npotato - 1\ntomato - 2\npineapple - 1\ncabbage - 1\nan_entry_which_consist_of_exactly_59_characters_long_string - 1\nbanana - 1\npear - 1\npumpkin - 2\ncherry - 1\nonion - 1' )
+
+input+=("src.bin add g")
+expected+=( "" )
+
+input+=("merge src.bin res.bin new_res.bin")
+expected+=( "" )
+
+input+=("new_res.bin list")
+expected+=( $'cucumber - 1\nkiwi - 1\ncarrot - 2\npotato - 1\ntomato - 2\npineapple - 1\ncabbage - 1\nan_entry_which_consist_of_exactly_59_characters_long_string - 1\nbanana - 1\npear - 1\npumpkin - 2\ncherry - 1\ng - 1\nonion - 1' )
+
+input+=("src.bin add pear")
+expected+=( "" )
+
+input+=("src.bin add carrot")
+expected+=( "" )
+
+input+=("src.bin add pumpkin")
+expected+=( "" )
+
+input+=("src.bin add carrot")
+expected+=( "" )
+
+input+=("src.bin add cucumber")
+expected+=( "" )
+
+input+=("src.bin add cabbage")
+expected+=( "" )
+
+input+=("src.bin add pineapple")
+expected+=( "" )
+
+input+=("src.bin add tomato")
+expected+=( "" )
+
+input+=("src.bin add banana")
+expected+=( "" )
+
+input+=("src.bin add onion")
+expected+=( "" )
+
+input+=("src.bin add potato")
+expected+=( "" )
+
+input+=("src.bin list")
+expected+=( $'cabbage - 1\ntomato - 1\npineapple - 1\npear - 1\npumpkin - 1\nbanana - 1\npotato - 1\ncucumber - 1\ncarrot - 2\nonion - 1' )
+
+input+=("dst.bin add an_entry_which_consist_of_exactly_59_characters_long_string")
+expected+=( "" )
+
+input+=("dst.bin add kiwi")
+expected+=( "" )
+
+input+=("dst.bin add cherry")
+expected+=( "" )
+
+input+=("dst.bin add g")
+expected+=( "" )
+
+input+=("dst.bin list")
+expected+=( $'an_entry_which_consist_of_exactly_59_characters_long_string - 1\nkiwi - 1\ng - 1\ncherry - 1' )
+
+input+=("merge src.bin dst.bin final_res.bin")
+expected+=( "" )
+
+input+=("final_res.bin list")
+expected+=( $'cucumber - 1\nkiwi - 1\ncarrot - 2\npotato - 1\ntomato - 1\npineapple - 1\ncabbage - 1\nan_entry_which_consist_of_exactly_59_characters_long_string - 1\nbanana - 1\npear - 1\npumpkin - 1\ng - 1\ncherry - 1\nonion - 1' )
+
 i=0
 arr_len=${#input[@]}
 printf '\n'
 for idx in "${!input[@]}"; do
-    actual=$($executable ${input[idx]})
+    actual=$($executable ${input[idx]} 2>&1)
     if [[ "${expected[idx]}" != "$actual" ]]; then
         printf '%s\n\n' \
             '---------------------------------------------------------------'
@@ -167,6 +313,8 @@ for idx in "${!input[@]}"; do
     fi
 done
 rm test.bin
+rm new_res.bin
+rm final_res.bin
 if [[ "$i" = "$arr_len" ]]; then
     echo OK
 fi

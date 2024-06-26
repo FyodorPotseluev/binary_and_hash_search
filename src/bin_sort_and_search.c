@@ -87,18 +87,18 @@ static void quick_sort_hoare_reqursive_call(FILE *file, int start, int end)
     quick_sort_hoare_reqursive_call(file, right_start_position, end);
 }
 
-void quick_sort_hoare(FILE *file)
+static void quick_sort_hoare(FILE *file)
 {
-    int file_size = size_of_file(file);
-    quick_sort_hoare_reqursive_call(file, 0, file_size-1);
+    int entries_num = num_of_entries(file);
+    quick_sort_hoare_reqursive_call(file, 0, entries_num -1);
 }
 
 int find_entry_with_binary_search(
     FILE *file, const char *entry_name
 )
 {
-    int file_size = size_of_file(file);
-    int left = 0, mid, right = file_size-1;
+    int entries_num = num_of_entries(file);
+    int left = 0, mid, right = entries_num-1;
     entry *mid_entry = malloc_err_checked(sizeof(entry));
     for(;;) {
         if (left > right) {
@@ -107,8 +107,7 @@ int find_entry_with_binary_search(
             return -1;
         }
         mid = left + (right - left) / 2;
-        fseek_err_checked(file, mid*sizeof(entry), SEEK_SET);
-        fread_err_checked(mid_entry, sizeof(entry), 1, file);
+        read_entry(mid_entry, file, mid);
         /* entry_name < mid_entry->str */
         if (strcmp(entry_name, mid_entry->str) < 0) right = mid-1;
         /* mid_entry->str < entry_name */
@@ -120,4 +119,37 @@ int find_entry_with_binary_search(
             return mid;
         }
     }
+}
+
+bool add_existing_entry_to_bin_file(FILE *file, const char *entry_name)
+{
+    int file_pos = find_entry_with_binary_search(file, entry_name);
+    if (file_pos != -1) {
+        /* entry was found */
+        increment_entry(file, file_pos);
+        return true;
+    } else
+        /* entry was not found */
+        return false;
+}
+
+void add_new_entry_to_bin_file(FILE *file, const char *entry_name)
+{
+    add_new_entry(file, entry_name);
+    quick_sort_hoare(file);
+}
+
+void merge_bin_files(FILE *dst_file, FILE *src_file)
+{
+    int i;
+    entry *transfer_entry = malloc_err_checked(sizeof(entry));
+    for (i=0; i < num_of_entries(src_file); i++) {
+        fread_err_checked(transfer_entry, sizeof(entry), 1, src_file);
+        bool found = add_existing_entry_to_bin_file(
+            dst_file, transfer_entry->str
+        );
+        if (!found) add_new_entry_to_bin_file(dst_file, transfer_entry->str);
+    }
+    free(transfer_entry);
+    quick_sort_hoare(dst_file);
 }

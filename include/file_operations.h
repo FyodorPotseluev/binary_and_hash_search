@@ -7,15 +7,25 @@
 #define FILE_OPERATIONS_H_INCLUDED
 
 #include "constants.h"
+#include <stdbool.h>
 #include <stdio.h>
 
-int size_of_file(FILE *file);
+void swap_files_if_src_file_larger(
+    FILE **dst_file, FILE **src_file,
+    const char **dst_file_name, const char **src_file_name
+);
 /*
-    Returns file size (the number of entries the file currently contains).
+    Swaps the file pointers it receives when the `src_file` is larger than
+the `dst_file.
+    If the `src_file` is larger also swaps the file names. */
+
+int num_of_entries(FILE *file);
+/*
+    Returns the number of entries the file currently contains.
 RECEIVES:
     - `file` file pointer;
 RETURNES:
-    - file size (the number of entries in the file) */
+    - the number of entries in the file */
 
 void read_entry(entry *read_res, FILE *file, int file_pos);
 /*
@@ -60,7 +70,7 @@ RECIEVES:
 RETURNES:
     --- */
 
-void make_new_entry(FILE *file, const char *entry_name);
+void add_new_entry(FILE *file, const char *entry_name);
 /*
     Creates a new entry in the end of the file and sets its value to 1.
 RECIEVES:

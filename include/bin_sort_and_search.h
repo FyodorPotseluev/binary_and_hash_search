@@ -6,15 +6,7 @@
 #define BIN_SORT_AND_SEARCH_H_INCLUDED
 
 #include <stdio.h>
-
-void quick_sort_hoare(FILE *file);
-/*
-    Sorts the entries in the file. Entries are sorted by entry name (id) in
-alpahabetical order. This enables to use the binary search algorithm later. The sort uses a divide and conquer algorithm and has the O=log(N) complexity.
-RECEIVES:
-    - `file` file pointer;
-RETURNES:
-    --- */
+#include <stdbool.h>
 
 int find_entry_with_binary_search(FILE *file, const char *entry_name);
 /*
@@ -28,5 +20,38 @@ RECEIVES:
 RETURNES:
     - the number of the position in the file containing the requested entry
     name. If the entry name was not found returnes -1. */
+
+bool add_existing_entry_to_bin_file(FILE *file, const char *entry_name);
+/*
+    Searches for an entry in a file with alphabetically sorted entries. If it's
+found - increments the entry value and returns `true`. If it's not - returns
+`false`. Has the O=log(N) complexity.
+RECEIVES:
+    - `file` file pointer;
+    - `entry_name` a string containing the entry name (id) to add;
+RETURNES:
+    --- */
+
+void add_new_entry_to_bin_file(FILE *file, const char *entry_name);
+/*
+    Adds an entry to a file with alphabetically sorted entries. It's used when
+we are already sure that there is no such entry in the current file
+(`add_existing_entry_to_bin_file` has already returned `false`). Has the
+O=log(N) complexity.
+RECEIVES:
+    - `file` file pointer;
+    - `entry_name` a string containing the entry name (id) to add;
+RETURNES:
+    --- */
+
+void merge_bin_files(FILE *dst_file, FILE *src_file);
+/*
+    Transfers all entries from the source file to the destination file, keeping
+the entries sorted by entry name (id) in alphabetical order.
+RECEIVES:
+    - `dst_file` destination file pointer;
+    - `src_file` source file pointer;
+RETURNES:
+    --- */
 
 #endif

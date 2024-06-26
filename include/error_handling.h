@@ -25,35 +25,22 @@ RECEIVES:
 RETURNES:
     --- */
 
-bool is_less_than_three(int num);
-/*
-    Checks if a number is less than three. Returns the corresponding boolean
-value. The function pointer is used by `incorr_num_of_args_error_handling`
+/*******************************************************************************
+    The functions below check if the given number meets a certain condition and
+depending on that return either `true` or `false` value.
+    These functions pointers are used by `incorr_num_of_args_error_handling`
 function.
-RECEIVES:
-    - `num` integer value;
-RETURNES:
-    - boolean value.*/
+*******************************************************************************/
+
+bool is_not_five(int num);
+
+bool is_less_than_three(int num);
 
 bool is_more_than_four(int num);
-/*
-    Checks if a number is more than four. Returns the corresponding boolean
-value. The function pointer is used by `incorr_num_of_args_error_handling`
-function.
-RECEIVES:
-    - `num` integer value;
-RETURNES:
-    - boolean value.*/
 
 bool is_not_three_and_is_not_four(int num);
-/*
-    Checks if a number is not three and is not four. Returns the corresponding
-boolean value. The function pointer is used by
-`incorr_num_of_args_error_handling` function.
-RECEIVES:
-    - `num` integer value;
-RETURNES:
-    - boolean value.*/
+
+/******************************************************************************/
 
 void file_open_error_handling(FILE *file, const char *file_name);
 /*
@@ -109,5 +96,7 @@ void rename_err_checked(const char *old_file_name, const char *new_file_name);
 FILE *fopen_err_checked(const char *path_name, const char *mode);
 
 void fclose_err_checked(FILE *file);
+
+/******************************************************************************/
 
 #endif

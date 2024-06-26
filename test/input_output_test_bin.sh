@@ -289,6 +289,92 @@ expected+=( $'10 - 1\n15 - 2\n16 - 1\n17 - 1\n18 - 1\n31 - 1\n36 - 2\n45 - 1\n51
 input+=("test.bin query")
 expected+=( "Error: Item name has not been specified" )
 
+# "merge" command tests
+
+input+=("merge_test.bin add cherry")
+expected+=( "" )
+
+input+=("merge_test.bin add banana")
+expected+=( "" )
+
+input+=("merge_test.bin add 13")
+expected+=( "" )
+
+input+=("merge_test.bin add pumpkin")
+expected+=( "" )
+
+input+=("merge_test.bin add mango")
+expected+=( "" )
+
+input+=("merge_test.bin add 62")
+expected+=( "" )
+
+input+=("merge_test.bin add 77")
+expected+=( "" )
+
+input+=("merge_test.bin add onion")
+expected+=( "" )
+
+input+=("merge_test.bin list")
+expected+=( $'13 - 1\n62 - 1\n77 - 1\nbanana - 1\ncherry - 1\nmango - 1\nonion - 1\npumpkin - 1' )
+
+input+=("merge merge_test.bin test.bin new_file.bin")
+expected+=( "" )
+
+input+=("new_file.bin list")
+expected+=( $'10 - 1\n13 - 1\n15 - 2\n16 - 1\n17 - 1\n18 - 1\n31 - 1\n36 - 2\n45 - 1\n51 - 1\n55 - 1\n56 - 2\n57 - 1\n62 - 2\n68 - 1\n70 - 1\n72 - 1\n74 - 1\n76 - 1\n77 - 1\n79 - 1\n83 - 1\n90 - 3\n91 - 1\n94 - 2\n96 - 1\nan_entry_which_consist_of_exactly_59_characters_long_string - 1\nbanana - 2\ncabbage - 1\ncarrot - 1\ncherry - 1\ncucumber - 2\nmango - 1\nonion - 3\npear - 4\npineapple - 3\npotato - 1\npumpkin - 3\ntomato - 1' )
+
+input+=("src_file.bin add an_entry_which_consist_of_exactly_59_characters_long_string")
+expected+=( "" )
+
+input+=("src_file.bin add cabbage")
+expected+=( "" )
+
+input+=("src_file.bin add cherry")
+expected+=( "" )
+
+input+=("src_file.bin add mango")
+expected+=( "" )
+
+input+=("src_file.bin add pear")
+expected+=( "" )
+
+input+=("src_file.bin add potato")
+expected+=( "" )
+
+input+=("src_file.bin add tomato")
+expected+=( "" )
+
+input+=("src_file.bin add onion")
+expected+=( "" )
+
+input+=("dst_file.bin add banana")
+expected+=( "" )
+
+input+=("dst_file.bin add carrot")
+expected+=( "" )
+
+input+=("dst_file.bin add cucumber")
+expected+=( "" )
+
+input+=("dst_file.bin add onion")
+expected+=( "" )
+
+input+=("dst_file.bin add pineapple")
+expected+=( "" )
+
+input+=("dst_file.bin add pumpkin")
+expected+=( "" )
+
+input+=("dst_file.bin add cherry")
+expected+=( "" )
+
+input+=("merge dst_file.bin src_file.bin res.bin")
+expected+=( "" )
+
+input+=("res.bin list")
+expected+=( $'an_entry_which_consist_of_exactly_59_characters_long_string - 1\nbanana - 1\ncabbage - 1\ncarrot - 1\ncherry - 2\ncucumber - 1\nmango - 1\nonion - 2\npear - 1\npineapple - 1\npotato - 1\npumpkin - 1\ntomato - 1' )
+
 i=0
 arr_len=${#input[@]}
 printf '\n'
@@ -310,7 +396,8 @@ for idx in "${!input[@]}"; do
         i=$((i+1))
     fi
 done
-rm test.bin
+rm new_file.bin
+rm res.bin
 if [[ "$i" = "$arr_len" ]]; then
     echo OK
 fi

@@ -103,6 +103,34 @@ input=(
     "test.bin query 56"
     "test.bin list"
     "test.bin query"
+    "merge_test.bin add cherry"
+    "merge_test.bin add banana"
+    "merge_test.bin add 13"
+    "merge_test.bin add pumpkin"
+    "merge_test.bin add mango"
+    "merge_test.bin add 62"
+    "merge_test.bin add 77"
+    "merge_test.bin add onion"
+    "merge_test.bin list"
+    "merge merge_test.bin test.bin new_file.bin"
+    "new_file.bin list"
+    "src_file.bin add an_entry_which_consist_of_exactly_59_characters_long_string"
+    "src_file.bin add cabbage"
+    "src_file.bin add cherry"
+    "src_file.bin add mango"
+    "src_file.bin add pear"
+    "src_file.bin add potato"
+    "src_file.bin add tomato"
+    "src_file.bin add onion"
+    "dst_file.bin add banana"
+    "dst_file.bin add carrot"
+    "dst_file.bin add cucumber"
+    "dst_file.bin add onion"
+    "dst_file.bin add pineapple"
+    "dst_file.bin add pumpkin"
+    "dst_file.bin add cherry"
+    "merge dst_file.bin src_file.bin res.bin"
+    "res.bin list"
 )
 
 i=0
@@ -124,7 +152,8 @@ for arg in "${input[@]}"; do
     i=$((i+1))
     printf '[%d/%d]\n' "$i" "$arr_len"
 done
-rm test.bin
+rm new_file.bin
+rm res.bin
 if [[ "$fail_test_flag" = 0 ]]; then
     echo OK
 fi

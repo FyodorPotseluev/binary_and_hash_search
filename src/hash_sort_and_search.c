@@ -8,6 +8,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* initialization in `transfer_with_possible_rebuilding` function;
+used in `merge_hash_files_with_possible_rebuilding` => `traverse_file_and` =>
+=> `execute_action` => `rebuild_if_needed_and_transfer_entry_to` =>
+`do_we_rebuild_hash_file` */
+static const char *module_global_var_file_name = NULL;
+
 /* the next primes after the numbers 8, 16, 32, 64 etc. */
 static const unsigned int hash_table_size[] = {
     11,        17,        37,        67,         131,        257,
@@ -22,7 +28,9 @@ typedef enum tag_find_idx_pos_action {
 } find_idx_pos_action;
 
 typedef enum tag_traverse_action {
-    transfer_all_entries_to_from, print_all_entries
+    rebuild_if_needed_and_transfer_entries_to_from,
+    transfer_all_entries_to_from,
+    print_all_entries
 } traverse_action;
 
 /* the flag indicating whether we have to increment the first 4 bytes of the
@@ -56,17 +64,25 @@ static void inc_curr_num_of_entries_in_file(FILE *file)
     fwrite_err_checked(&curr_num_of_entries, sizeof(unsigned int), 1, file);
 }
 
+static void writing_entry(FILE *file, const entry *entry_to_write)
+{
+    fseek_err_checked(file, -sizeof(entry), SEEK_CUR);
+    fwrite_err_checked(entry_to_write, sizeof(entry), 1, file);
+}
+
 static void handle_free_entry(
     find_idx_pos_action action, const entry *new_entry,
-    FILE *file, byte_inc_flag inc_entries_byte
+    FILE *file, byte_inc_flag inc_entries_byte,
+    unsigned int *curr_num_of_entries
 )
 {
     switch (action) {
         case write_entry:
-            fseek_err_checked(file, -sizeof(entry), SEEK_CUR);
-            fwrite_err_checked(new_entry, sizeof(entry), 1, file);
-            if (inc_entries_byte)
+            writing_entry(file, new_entry);
+            if (inc_entries_byte) {
                 inc_curr_num_of_entries_in_file(file);
+                if (curr_num_of_entries) (*curr_num_of_entries)++;
+            }
             break;
         case print_entry:
             printf("%s - %d\n", new_entry->str, new_entry->data);
@@ -80,8 +96,7 @@ static void handle_found_entry(
     switch (action) {
         case write_entry:
             (found_entry->data)++;
-            fseek_err_checked(file, -sizeof(entry), SEEK_CUR);
-            fwrite_err_checked(found_entry, sizeof(entry), 1, file);
+            writing_entry(file, found_entry);
             break;
         case print_entry:
             printf("%s - %d\n", found_entry->str, found_entry->data);
@@ -90,7 +105,8 @@ static void handle_found_entry(
 
 static void find_idx_position_in_file_and(
     find_idx_pos_action action, FILE *file, const entry *new_entry,
-    unsigned int idx, unsigned int size_idx, byte_inc_flag inc_entries_byte
+    unsigned int idx, unsigned int *curr_num_of_entries, unsigned int size_idx,
+    byte_inc_flag inc_entries_byte
 )
 {
     entry *idx_entry = calloc_err_checked(1, sizeof(entry));
@@ -111,7 +127,9 @@ static void find_idx_position_in_file_and(
             continue;
         }
         /* it is free */
-        handle_free_entry(action, new_entry, file, inc_entries_byte);
+        handle_free_entry(
+            action, new_entry, file, inc_entries_byte, curr_num_of_entries
+        );
         break;
     }
     free(idx_entry);
@@ -140,48 +158,90 @@ static void get_init_bytes(
     fread_err_checked(idx, sizeof(unsigned int), 1, file);
 }
 
+static void prepare_dst_file(
+    FILE *new_file, FILE *old_file, unsigned int *size_idx
+)
+{
+    int old_file_pos = ftell_err_checked(old_file);
+    unsigned int curr_num_of_entries;
+    get_init_bytes(old_file, &curr_num_of_entries, size_idx);
+    (*size_idx)++;
+    /* increase `new_file` size */
+    truncate_err_checked(
+        "new_file", init_bytes_num + hash_table_size[*size_idx]*sizeof(entry)
+    );
+    /* write initial bytes */
+    fwrite_err_checked(&curr_num_of_entries, sizeof(unsigned int), 1, new_file);
+    fwrite_err_checked(size_idx, sizeof(unsigned int), 1, new_file);
+    /* return old_file pointer to the initial positon */
+    fseek_err_checked(old_file, old_file_pos, SEEK_SET);
+}
+
+static void get_idx_then_find_idx_position_in_file_and(
+        find_idx_pos_action action, FILE *dst_file, const entry *src_file_entry,
+        unsigned int *curr_num_of_entries, unsigned int size_idx,
+        byte_inc_flag inc_entries_byte
+)
+{
+    unsigned int idx = get_idx(src_file_entry->str, hash_table_size[size_idx]);
+    find_idx_position_in_file_and(
+        action, dst_file, src_file_entry, idx,
+        curr_num_of_entries, size_idx, inc_entries_byte
+    );
+}
+
 static void transfer_entry_to_from(
-    FILE *new_file, FILE *old_file,
-    const entry *old_file_entry, bool first_iteration
+    FILE *dst_file, FILE *src_file,
+    const entry *src_file_entry, bool first_iteration,
+    byte_inc_flag inc_entries_byte, unsigned int *curr_num_of_entries
 )
 {
     static unsigned int size_idx;
-    if (first_iteration) {
-        int old_file_pos = ftell_err_checked(old_file);
-        unsigned int curr_num_of_entries;
-        get_init_bytes(old_file, &curr_num_of_entries, &size_idx);
-        size_idx++;
-        /* increase `new_file` size */
-        truncate_err_checked(
-            "new_file", init_bytes_num + hash_table_size[size_idx]*sizeof(entry)
-        );
-        /* write initial bytes */
-        fwrite_err_checked(
-            &curr_num_of_entries, sizeof(unsigned int), 1, new_file
-        );
-        fwrite_err_checked(
-            &size_idx, sizeof(unsigned int), 1, new_file
-        );
-        /* return old_file pointer to the initial positon */
-        fseek_err_checked(old_file, old_file_pos, SEEK_SET);
-    }
-    unsigned int idx = get_idx(old_file_entry->str, hash_table_size[size_idx]);
-    find_idx_position_in_file_and(
-        write_entry, new_file, old_file_entry, idx,
-        size_idx, dont_inc_num_of_entries_byte
+    if (first_iteration)
+        prepare_dst_file(dst_file, src_file, &size_idx);
+    get_idx_then_find_idx_position_in_file_and(
+        write_entry, dst_file, src_file_entry,
+        curr_num_of_entries, size_idx, inc_entries_byte
+    );
+}
+
+static void do_we_rebuild_hash_file(
+    FILE **file, const char *file_name,
+    unsigned int curr_num_of_entries, unsigned int *size_idx
+);
+
+static void rebuild_if_needed_and_transfer_entry_to(
+    FILE **dst_file, const entry *src_file_entry, bool first_iteration
+)
+{
+    static unsigned int curr_num_of_entries, size_idx;
+    if (first_iteration)
+        get_init_bytes(*dst_file, &curr_num_of_entries, &size_idx);
+    do_we_rebuild_hash_file(
+        dst_file, module_global_var_file_name, curr_num_of_entries, &size_idx
+    );
+    get_idx_then_find_idx_position_in_file_and(
+        write_entry, *dst_file, src_file_entry,
+        &curr_num_of_entries, size_idx, true
     );
 }
 
 static void execute_action(
-    traverse_action action, FILE *dst_file, FILE *src_file,
+    traverse_action action, FILE **dst_file, FILE *src_file,
     const entry *src_file_entry, bool first_iteration
 )
 {
     switch (action) {
+        case rebuild_if_needed_and_transfer_entries_to_from:
+            rebuild_if_needed_and_transfer_entry_to(
+                dst_file, src_file_entry, first_iteration
+            );
+            break;
         case transfer_all_entries_to_from:
             transfer_entry_to_from(
-                    dst_file, src_file, src_file_entry, first_iteration
-                    );
+                    *dst_file, src_file, src_file_entry, first_iteration,
+                    dont_inc_num_of_entries_byte, NULL
+            );
             break;
         case print_all_entries:
             printf("%s - %d\n", src_file_entry->str, src_file_entry->data);
@@ -189,7 +249,7 @@ static void execute_action(
 }
 
 static void traverse_file_and(
-    traverse_action action, FILE *dst_file, FILE *src_file
+    traverse_action action, FILE **dst_file, FILE *src_file
 )
 {
     bool first_iteration = true;
@@ -213,7 +273,7 @@ static void traverse_file_and(
 static FILE *rebuild(FILE *old_file, const char *old_file_name)
 {
     FILE *new_file = fopen_err_checked("new_file", "w+");
-    traverse_file_and(transfer_all_entries_to_from, new_file, old_file);
+    traverse_file_and(transfer_all_entries_to_from, &new_file, old_file);
     /* remove old file */
     remove_err_checked(old_file_name);
     /* cange `new_file`'s name to `old_file`'s name */
@@ -246,7 +306,8 @@ void add_entry_to_hash_file(
     new_entry->data = 1;
     idx = get_idx(entry_name, hash_table_size[size_idx]);
     find_idx_position_in_file_and(
-        write_entry, *file, new_entry, idx, size_idx, inc_num_of_entries_byte
+        write_entry, *file, new_entry, idx, NULL,
+        size_idx, inc_num_of_entries_byte
     );
     free(new_entry);
 }
@@ -266,8 +327,18 @@ void print_hash_entry(FILE *file, const char *entry_name)
     fread_err_checked(&size_idx, sizeof(unsigned int), 1, file);
     unsigned int idx = get_idx(entry_to_print->str, hash_table_size[size_idx]);
     find_idx_position_in_file_and(
-        print_entry, file, entry_to_print, idx,
+        print_entry, file, entry_to_print, idx, NULL,
         size_idx, dont_inc_num_of_entries_byte
     );
     free(entry_to_print);
+}
+
+void merge_hash_files_with_possible_rebuilding(
+    FILE **dst_file, const char *dst_file_name, FILE *src_file
+)
+{
+    module_global_var_file_name = dst_file_name;
+    traverse_file_and(
+        rebuild_if_needed_and_transfer_entries_to_from, dst_file, src_file
+    );
 }

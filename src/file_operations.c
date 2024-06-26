@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int size_of_file(FILE *file)
+int num_of_entries(FILE *file)
 {
     int cur_file_pos, file_size_in_bytes;
     cur_file_pos = ftell_err_checked(file);
@@ -13,6 +13,29 @@ int size_of_file(FILE *file)
     file_size_in_bytes = ftell_err_checked(file);
     fseek_err_checked(file, cur_file_pos, SEEK_SET);
     return(file_size_in_bytes / sizeof(entry));
+}
+
+static bool src_file_is_bigger(FILE *dst_file, FILE *src_file)
+{
+    if (num_of_entries(src_file) > num_of_entries(dst_file))
+        return true;
+    else
+        return false;
+}
+
+void swap_files_if_src_file_larger(
+    FILE **dst_file, FILE **src_file,
+    const char **dst_file_name, const char **src_file_name
+)
+{
+    if (src_file_is_bigger(*dst_file, *src_file)) {
+        FILE *tmp = *dst_file;
+        *dst_file = *src_file;
+        *src_file = tmp;
+        const char *tmp_str = *dst_file_name;
+        *dst_file_name = *src_file_name;
+        *src_file_name = tmp_str;
+    }
 }
 
 void read_entry(entry *read_res, FILE *file, int file_pos)
@@ -45,7 +68,7 @@ void copy_entry(entry *dst, const entry *src)
     dst->data = src->data;
 }
 
-void make_new_entry(FILE *file, const char *entry_name)
+void add_new_entry(FILE *file, const char *entry_name)
 {
     entry *buffer = calloc_err_checked(sizeof(entry), 1);
     fseek_err_checked(file, 0, SEEK_END);

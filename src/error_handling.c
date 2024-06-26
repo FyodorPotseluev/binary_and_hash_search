@@ -19,6 +19,11 @@ void entry_name_error_handling(const char *entry_name)
     }
 }
 
+bool is_not_five(int num)
+{
+    return (num != 5) ? true : false;
+}
+
 bool is_less_than_three(int num)
 {
     return (num < 3) ? true : false;
@@ -58,10 +63,7 @@ size_t fread_err_checked(
 )
 {
     size_t items_read = fread(buffer, item_size, items_num, file);
-    if (items_read != items_num &&
-        (int)items_read != EOF &&
-        0 != strcmp(strerror(errno), "Success"))
-    {
+    if (items_read != items_num && ferror(file)) {
         perror("fread failed");
         exit(1);
     }
