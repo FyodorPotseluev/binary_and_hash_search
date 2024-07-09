@@ -52,14 +52,11 @@ void write_entry(const entry *to_write, FILE *file, int file_pos)
 
 void swap_entries(FILE *file, int first_pos, int second_pos)
 {
-    entry *first = malloc_err_checked(sizeof(entry));
-    entry *second = malloc_err_checked(sizeof(entry));
-    read_entry(first, file, first_pos);
-    read_entry(second, file, second_pos);
-    write_entry(second, file, first_pos);
-    write_entry(first, file, second_pos);
-    free(first);
-    free(second);
+    entry first, second;
+    read_entry(&first, file, first_pos);
+    read_entry(&second, file, second_pos);
+    write_entry(&second, file, first_pos);
+    write_entry(&first, file, second_pos);
 }
 
 void copy_entry(entry *dst, const entry *src)
@@ -70,21 +67,20 @@ void copy_entry(entry *dst, const entry *src)
 
 void add_new_entry(FILE *file, const char *entry_name)
 {
-    entry *buffer = calloc_err_checked(sizeof(entry), 1);
+    entry buffer;
+    memset(&buffer, 0, sizeof(entry));
     fseek_err_checked(file, 0, SEEK_END);
-    strcpy(buffer->str, entry_name);
-    buffer->data = 1;
-    fwrite_err_checked(buffer, 1, sizeof(entry), file);
-    free(buffer);
+    strcpy(buffer.str, entry_name);
+    buffer.data = 1;
+    fwrite_err_checked(&buffer, 1, sizeof(entry), file);
 }
 
 void increment_entry(FILE *file, int file_pos)
 {
-    entry *buffer = malloc_err_checked(sizeof(entry));
+    entry buffer;
     fseek_err_checked(file, file_pos*sizeof(entry), SEEK_SET);
-    fread_err_checked(buffer, sizeof(entry), 1, file);
-    buffer->data += 1;
+    fread_err_checked(&buffer, sizeof(entry), 1, file);
+    buffer.data++;
     fseek_err_checked(file, file_pos*sizeof(entry), SEEK_SET);
-    fwrite_err_checked(buffer, sizeof(entry), 1, file);
-    free(buffer);
+    fwrite_err_checked(&buffer, sizeof(entry), 1, file);
 }

@@ -109,18 +109,18 @@ static void find_idx_position_in_file_and(
     byte_inc_flag inc_entries_byte
 )
 {
-    entry *idx_entry = calloc_err_checked(1, sizeof(entry));
+    entry idx_entry;
     for (;;) {
         /* find idx entry in the file */
         fseek_err_checked(file, init_bytes_num + idx*sizeof(entry), SEEK_SET);
-        fread_err_checked(idx_entry, sizeof(entry), 1, file);
+        fread_err_checked(&idx_entry, sizeof(entry), 1, file);
         /* is it free? */
-        if (idx_entry->str[0] != '\0') {
+        if (idx_entry.str[0] != '\0') {
             /* it is not free */
             /* is it the entry we're looking for? */
-            if (0 == strcmp(new_entry->str, idx_entry->str)) {
+            if (0 == strcmp(new_entry->str, idx_entry.str)) {
                 /* it is */
-                handle_found_entry(action, idx_entry, file);
+                handle_found_entry(action, &idx_entry, file);
                 break;
             }
             idx_increment(&idx, hash_table_size[size_idx]);
@@ -132,7 +132,6 @@ static void find_idx_position_in_file_and(
         );
         break;
     }
-    free(idx_entry);
 }
 
 static unsigned int get_hash(const char *str)
@@ -256,18 +255,17 @@ static void traverse_file_and(
     unsigned int size_idx, i;
     fseek_err_checked(src_file, sizeof(unsigned int), SEEK_SET);
     fread_err_checked(&size_idx, sizeof(unsigned int), 1, src_file);
-    entry *src_file_entry = calloc_err_checked(1, sizeof(entry));
+    entry src_file_entry;
     for (i=0; i < hash_table_size[size_idx]; i++) {
         /* read the next entry from the `src_file` */
-        fread_err_checked(src_file_entry, sizeof(entry), 1, src_file);
+        fread_err_checked(&src_file_entry, sizeof(entry), 1, src_file);
         /* if it's empty - continue */
-        if (src_file_entry->str[0] == '\0') continue;
+        if (src_file_entry.str[0] == '\0') continue;
         execute_action(
-            action, dst_file, src_file, src_file_entry, first_iteration
+            action, dst_file, src_file, &src_file_entry, first_iteration
         );
         first_iteration = false;
     }
-    free(src_file_entry);
 }
 
 static FILE *rebuild(FILE *old_file, const char *old_file_name)
@@ -301,15 +299,15 @@ void add_entry_to_hash_file(
     get_init_bytes(*file, &curr_num_of_entries, &size_idx);
     do_we_rebuild_hash_file(file, file_name, curr_num_of_entries, &size_idx);
     /* create new entry with 1 value */
-    entry *new_entry = calloc_err_checked(1, sizeof(entry));
-    strcpy(new_entry->str, entry_name);
-    new_entry->data = 1;
+    entry new_entry;
+    memset(&new_entry, 0, sizeof(entry));
+    strcpy(new_entry.str, entry_name);
+    new_entry.data = 1;
     idx = get_idx(entry_name, hash_table_size[size_idx]);
     find_idx_position_in_file_and(
-        write_entry, *file, new_entry, idx, NULL,
+        write_entry, *file, &new_entry, idx, NULL,
         size_idx, inc_num_of_entries_byte
     );
-    free(new_entry);
 }
 
 void print_hash_file(FILE *file)
@@ -320,17 +318,16 @@ void print_hash_file(FILE *file)
 void print_hash_entry(FILE *file, const char *entry_name)
 {
     unsigned int size_idx;
-    entry *entry_to_print = malloc_err_checked(sizeof(entry));
-    strcpy(entry_to_print->str, entry_name);
-    entry_to_print->data = 0;
+    entry entry_to_print;
+    strcpy(entry_to_print.str, entry_name);
+    entry_to_print.data = 0;
     fseek_err_checked(file, sizeof(unsigned int), SEEK_SET);
     fread_err_checked(&size_idx, sizeof(unsigned int), 1, file);
-    unsigned int idx = get_idx(entry_to_print->str, hash_table_size[size_idx]);
+    unsigned int idx = get_idx(entry_to_print.str, hash_table_size[size_idx]);
     find_idx_position_in_file_and(
-        print_entry, file, entry_to_print, idx, NULL,
+        print_entry, file, &entry_to_print, idx, NULL,
         size_idx, dont_inc_num_of_entries_byte
     );
-    free(entry_to_print);
 }
 
 void merge_hash_files_with_possible_rebuilding(

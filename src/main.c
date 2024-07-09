@@ -55,14 +55,13 @@ void print_entry(const char **argv)
 #if defined(HASH)
     print_hash_entry(file, entry_name);
 #elif defined(BIN)
-    entry *read_res = malloc_err_checked(sizeof(entry));
+    entry read_res;
     int file_pos = find_entry_with_binary_search(file, entry_name);
     if (file_pos != -1) {
-        read_entry(read_res, file, file_pos);
-        printf("%s - %d\n", entry_name, read_res->data);
+        read_entry(&read_res, file, file_pos);
+        printf("%s - %d\n", entry_name, read_res.data);
     } else
         printf("%s - 0\n", entry_name);
-    free(read_res);
 #endif
     fclose_err_checked(file);
 }
@@ -74,14 +73,13 @@ void print_all_entries(const char **argv)
 #if defined(HASH)
     print_hash_file(file);
 #elif defined(BIN)
-    entry *read_res = malloc_err_checked(sizeof(entry));
+    entry read_res;
     while (
-        fread_err_checked(read_res, 1, sizeof(entry), file)
+        fread_err_checked(&read_res, 1, sizeof(entry), file)
     )
     {
-        printf("%s - %d\n", read_res->str, read_res->data);
+        printf("%s - %d\n", read_res.str, read_res.data);
     }
-    free(read_res);
 #endif
     fclose_err_checked(file);
 }
@@ -108,7 +106,6 @@ void merge_files(const char **argv)
     remove_err_checked(src_file_name);
     rename_err_checked(dst_file_name, final_file_name);
 }
-
 
 int main(int argc, const char **argv)
 {

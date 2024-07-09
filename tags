@@ -29,8 +29,6 @@ add_existing_entry_to_bin_file	src/bin_sort_and_search.c	/^bool add_existing_ent
 add_new_entry	src/file_operations.c	/^void add_new_entry(FILE *file, const char *entry_name)$/;"	f
 add_new_entry_to_bin_file	src/bin_sort_and_search.c	/^void add_new_entry_to_bin_file(FILE *file, const char *entry_name)$/;"	f
 byte_inc_flag	src/hash_sort_and_search.c	/^} byte_inc_flag;$/;"	t	typeref:enum:tag_byte_inc_flag	file:
-calloc_err_checked	src/error_handling.c	/^void *calloc_err_checked(size_t arr_size, size_t element_size)$/;"	f
-clean_up	src/bin_sort_and_search.c	/^static void clean_up(entry *first, ...)$/;"	f	file:
 cmd_position	include/constants.h	/^    cmd_position            = 2,$/;"	e	enum:constants
 cmd_size	include/constants.h	/^    cmd_size                = 6,$/;"	e	enum:constants
 constants	include/constants.h	/^enum constants{$/;"	g
@@ -74,7 +72,6 @@ is_more_than_four	src/error_handling.c	/^bool is_more_than_four(int num)$/;"	f
 is_not_five	src/error_handling.c	/^bool is_not_five(int num)$/;"	f
 is_not_three_and_is_not_four	src/error_handling.c	/^bool is_not_three_and_is_not_four(int num)$/;"	f
 main	src/main.c	/^int main(int argc, const char **argv)$/;"	f
-malloc_err_checked	src/error_handling.c	/^void *malloc_err_checked(size_t size)$/;"	f
 max_entry_name_size	include/constants.h	/^    max_entry_name_size     = 60,$/;"	e	enum:constants
 merge_bin_files	src/bin_sort_and_search.c	/^void merge_bin_files(FILE *dst_file, FILE *src_file)$/;"	f
 merge_cmd_position	include/constants.h	/^    merge_cmd_position      = 1,$/;"	e	enum:constants

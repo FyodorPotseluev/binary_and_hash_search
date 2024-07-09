@@ -83,10 +83,6 @@ void fseek_err_checked(FILE *file, long offset, int whence);
 
 long ftell_err_checked(FILE *file);
 
-void *malloc_err_checked(size_t size);
-
-void *calloc_err_checked(size_t arr_size, size_t element_size);
-
 void truncate_err_checked(const char *file_name, off_t length);
 
 void remove_err_checked(const char *file_name);

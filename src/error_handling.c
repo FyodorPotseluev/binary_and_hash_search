@@ -89,26 +89,6 @@ long ftell_err_checked(FILE *file)
     return pos;
 }
 
-void *malloc_err_checked(size_t size)
-{
-    void *ptr = malloc(size);
-    if (!ptr) {
-        perror("malloc failed");
-        exit(1);
-    }
-    return ptr;
-}
-
-void *calloc_err_checked(size_t arr_size, size_t element_size)
-{
-    void *ptr = calloc(arr_size, element_size);
-    if (!ptr) {
-        perror("calloc failed");
-        exit(1);
-    }
-    return ptr;
-}
-
 void truncate_err_checked(const char *file_name, off_t length)
 {
     int trunc_res = truncate(file_name, length);
