@@ -42,7 +42,7 @@
     ```
                                 Contributing
 
-    Issue Tracker: github.com/..............................
+    Issue Tracker: github.com/FyodorPotseluev/binary_and_hash_search/issues
 
                                 License
 
