@@ -12,7 +12,7 @@ input+=("test.bin add apple pear")
 expected+=( "Error: Incorrect number of arguments" )
 
 input+=("test.bin add string_which_consist_of_60_chars_which_surpas_the_limit_by_1")
-expected+=( "Error: Too long entry name" )
+expected+=( $'src/main.c:line 84\nError: Too long entry name' )
 
 input+=("test.bin query apple pear")
 expected+=( "Error: Incorrect number of arguments" )
@@ -125,7 +125,7 @@ input+=("test.bin list")
 expected+=( $'cabbage - 1\ntomato - 3\npineapple - 1\npear - 1\npumpkin - 2\nbanana - 1\npotato - 3\ncucumber - 1\ncarrot - 3\nonion - 1\nan_entry_which_consist_of_exactly_59_characters_long_string - 2\nkiwi - 1' )
 
 input+=("test.bin query string_which_consist_of_60_chars_which_surpas_the_limit_by_1")
-expected+=( "Error: Too long entry name" )
+expected+=( $'src/main.c:line 126\nError: Too long entry name' )
 
 input+=("test.bin add cherry")
 expected+=( "" )
@@ -143,7 +143,7 @@ input+=("test.bin list string_which_consist_of_60_chars_which_surpas_the_limit_b
 expected+=( $'cucumber - 1\nkiwi - 1\ncarrot - 3\npotato - 3\ntomato - 3\npineapple - 1\ncabbage - 1\nan_entry_which_consist_of_exactly_59_characters_long_string - 2\nbanana - 1\npear - 1\npumpkin - 2\ncherry - 1\nonion - 1' )
 
 input+=("test.bin query")
-expected+=( "Error: Item name has not been specified" )
+expected+=( $'src/main.c:line 126\nError: Item name has not been specified' )
 
 # "merge" command tests
 
@@ -154,7 +154,7 @@ input+=("merge file1 file2 file3 file4")
 expected+=( "Error: Incorrect number of arguments" )
 
 input+=("merge file1 file2 file3")
-expected+=( "file1: No such file or directory" )
+expected+=( $'src/main.c: line 171\nfile1: No such file or directory' )
 
 input+=("dst.bin add pear")
 expected+=( "" )
